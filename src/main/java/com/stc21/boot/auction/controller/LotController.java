@@ -25,29 +25,45 @@ public class LotController {
     @Autowired
     private UserService userService;
 
+//
+//    @GetMapping()
+//    public String showLotPage(Model model,
+//                              @RequestParam(name = "id") Long id,
+//                              @AuthenticationPrincipal Authentication token) {
+//        LotDto lotDto = lotService.findById(id);
+//        if (lotDto == null)
+//            throw new PageNotFoundException();
+//
+//        model.addAttribute("lot", lotDto);
+//        UserDto userDto = userService.findByUsername(token.getName());
+//
+//        if (userDto.getRole().getName().contains("admin"))
+//            return "lot";
+//
+//        if (lotDto.getUserDto().getId().equals(userDto.getId()))
+//            return "lot";
+//
+//        if (lotDto.getBought() && lotDto.getPurchase().getBuyer().getId().equals(userDto.getId()))
+//            return "lot";
+//
+//        return "redirect:/";
+//    }
+
 
     @GetMapping()
     public String showLotPage(Model model,
-                              @RequestParam(name = "id") Long id,
-                              @AuthenticationPrincipal Authentication token) {
+                              @RequestParam(name = "id") Long id) {
         LotDto lotDto = lotService.findById(id);
         if (lotDto == null)
             throw new PageNotFoundException();
-
-        model.addAttribute("lot", lotDto);
-        UserDto userDto = userService.findByUsername(token.getName());
-
-        if (userDto.getRole().getName().contains("admin"))
+        else {
+            model.addAttribute("lot", lotDto);
             return "lot";
-
-        if (lotDto.getUserDto().getId().equals(userDto.getId()))
-            return "lot";
-
-        if (lotDto.getBought() && lotDto.getPurchase().getBuyer().getId().equals(userDto.getId()))
-            return "lot";
-
-        return "redirect:/";
+        }
     }
+
+
+
 
 /*    @PostMapping(path = "/{lotId}")
     public String showLotPage(Model model, @RequestParam(defaultValue = "1") long lotId) {
