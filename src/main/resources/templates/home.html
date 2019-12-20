@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base::head(title='Home')"></head>
+<body>
+<th:block th:replace="base::navbar" />
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col d-none d-lg-block"></div>
+
+        <!---------------------------------->
+
+        <div class="col-12 col-lg-10">
+            <div class="row">
+                <div class="col">
+<!--                    <h1>Hello, World!</h1>-->
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12 col-md-3" id="filters">
+
+                    <button aria-controls="collapseExample" aria-expanded="false" class="btn btn-outline-primary btn-block d-md-none mb-2"
+                            data-target="#collapseFilter" data-toggle="collapse" type="button">
+                        Фильтровать
+                    </button>
+
+                    <div class="collapse" id="collapseFilter">
+                        <form id="filterParameters" th:action="@{/}" method="get">
+                            <label for="filterParameters"><h4>Фильтрация</h4></label>
+
+                            <div class="form-group" id="categoryFilterSelect">
+                                <label for="categoryFilterSelect">Выберите категорию</label>
+                                <div class="input-group mb-3">
+                                    <select class="custom-select" id="categoryGroupSelect" name="categoryFilter">
+                                        <option th:selected="${categoryFilter==-1}" value="-1">Любая категория</option>
+                                        <option th:each="category : ${categories}" th:text="${category.name}" th:selected="${categoryFilter==category.id}" th:value="${category.id}">One</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="cityFilterSelect">
+                                <label for="cityFilterSelect">Выберите город</label>
+                                <div class="input-group mb-3">
+                                    <select class="custom-select" id="cityGroupSelect" name="cityFilter">
+                                        <option th:selected="${cityFilter==-1}" value="-1">Любой город</option>
+                                        <option th:each="city : ${cities}" th:text="${city.name}" th:selected="${cityFilter==city.id}" th:value="${city.id}">One</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="conditionFilterSelect">
+                                <label for="conditionFilterSelect">Выберите состояние</label>
+                                <div class="input-group mb-3">
+                                    <select class="custom-select" id="conditionGroupSelect" name="conditionFilter">
+                                        <option th:selected="${conditionFilter==-1}" value="-1">Любое состояние</option>
+                                        <option th:each="condition : ${conditions}" th:text="${condition.name}" th:selected="${conditionFilter==condition.id}" th:value="${condition.id}">One</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-block" type="submit">Применить фильтры</button>
+                        </form>
+                    </div>
+
+                    <hr>
+                </div>
+
+                <!---------------------------------->
+
+                <div class="col-12 col-md-9" id="cards">
+                    <form id="searchForm" th:action="@{/}" method="get">
+                        <div class="form-row">
+                            <div class="col-12">
+                                    <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Поиск" name="searchText" th:value="${searchText}">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" id="searchButton"><i class="fas fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                Поиск
+                                <div class="form-check form-check-inline pl-3">
+                                    <input class="form-check-input" type="radio" name="selectOption" id="searchRadioOption1" value="name" th:checked="${selectOption.equals('name')}">
+                                    <label class="form-check-label" for="searchRadioOption1">в заголовке</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="selectOption" id="searchRadioOption2" value="description" th:checked="${selectOption.equals('description')}">
+                                    <label class="form-check-label" for="searchRadioOption2">в описании</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="row mt-2">
+                        <div class="col-12 col-md-3">
+                            <span th:if="${lots.totalElements==1}">Найден</span>
+                            <span th:unless="${lots.totalElements==1}">Найдено</span>
+
+                            <span th:text="${lots.totalElements}">X</span>
+
+                            <span th:if="${lots.totalElements==1}">лот</span>
+                            <span th:if="${lots.totalElements>1 && lots.totalElements<5}">лота</span>
+                            <span th:if="${lots.totalElements>=5}">лотов</span>
+                        </div>
+
+                        <div class="col-md-9 text-right d-none d-md-block">
+                            <h6>
+                                <span class="pr-3">Сортировать по:</span>
+                                цене
+                                <a th:href="@{/(sortBy='currentPrice', sortDir='asc')}">▲</a>
+                                <a th:href="@{/(sortBy='currentPrice', sortDir='desc')}">▼</a>
+                                времени создания
+                                <a th:href="@{/(sortBy='creationTime', sortDir='asc')}">▲</a>
+                                <a th:href="@{/(sortBy='creationTime', sortDir='desc')}">▼</a>
+                            </h6>
+                        </div>
+
+                        <div class="col-12 d-block d-md-none mt-2">
+                            <h6>
+                                <div class="row">
+                                    <div class="col-5">
+                                        Цена
+                                        <a th:href="@{/(sortBy='currentPrice', sortDir='asc')}">▲</a>
+                                        <a th:href="@{/(sortBy='currentPrice', sortDir='desc')}">▼</a>
+                                    </div>
+                                    <div class="col-7 text-right">
+                                        Время создания
+                                        <a th:href="@{/(sortBy='creationTime', sortDir='asc')}">▲</a>
+                                        <a th:href="@{/(sortBy='creationTime', sortDir='desc')}">▼</a>
+                                    </div>
+                                </div>
+                            </h6>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col">
+                            <th:block th:each="lot : ${lots}">
+                                <div th:replace="base::card(lot=${lot})"></div>
+                            </th:block>
+
+                            <div class="text-center" th:if="${lots.totalPages == 0}">
+                                <h3>Поиск не нашёл ничего. Печаль.</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <div class="row" th:if="${lots.totalPages > 1}">
+                        <div class="col"></div>
+
+                        <nav col="col-8">
+                            <ul class="pagination">
+                                <li class="page-item" th:each="pageNumber: ${#numbers.sequence(1, lots.totalPages)}" th:classappend="${pageNumber == lots.number+1} ? active">
+                                    <a class="page-link" th:href="@{/(page=${pageNumber})}" th:text="${pageNumber}">1</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <div class="col"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!---------------------------------->
+
+        <div class="col d-none d-lg-block"></div>
+    </div>
+
+
+</div>
+
+<th:block th:insert="base::scripts" />
+</body>
+</html>

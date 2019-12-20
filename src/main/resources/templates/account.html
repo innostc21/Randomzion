@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="base::head(title='Account page')"></head>
+
+<body>
+<th:block th:replace="base::navbar"/>
+<style>
+    html, body {
+        height: 100%;
+    }
+</style>
+<div class="row h-100">
+    <div class="col-8">
+        <ul class="nav nav-tabs mx-3 my-1" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a aria-controls="myLots" aria-selected="false" class="nav-link active" data-toggle="tab" href="#myLots"
+                   id="myLots-tab"
+                   role="tab">Продаваемые лоты</a>
+            </li>
+            <li class="nav-item">
+                <a aria-controls="mySoldLots" aria-selected="false" class="nav-link" data-toggle="tab" href="#mySoldLots"
+                   id="mySoldLots-tab"
+                   role="tab">Проданные лоты</a>
+            </li>
+            <li class="nav-item">
+                <a aria-controls="boughtLots" aria-selected="false" class="nav-link" data-toggle="tab"
+                   href="#boughtLots" id="boughtLots-tab"
+                   role="tab">Купленные лоты</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div aria-labelledby="myLots-tab" class="tab-pane fade show active" id="myLots" role="tabpanel">
+                <div class="container-fluid" id="cards">
+                    <th:block th:each="lot : ${unboughtLots}">
+                        <div th:replace="base::card(lot=${lot})"></div>
+                    </th:block>
+                </div>
+
+                <div class="mx-4 my-3" th:unless="${unboughtLots.size()>0}">
+                    <h5 class="text-dark">Нет товаров для продажи. <a th:href="@{/add/lot}">Желаете что-либо продать?</a></h5>
+                </div>
+            </div>
+
+            <div aria-labelledby="mySoldLots-tab" class="tab-pane fade" id="mySoldLots" role="tabpanel">
+                <div class="container-fluid" id="soldCards">
+                    <th:block th:each="lot : ${soldLots}">
+                        <div th:replace="base::card(lot=${lot})"></div>
+                    </th:block>
+                </div>
+
+                <div class="mx-4 my-3" th:unless="${soldLots.size()>0}">
+                    <h5 class="text-dark">Нет проданных товаров.</h5>
+                </div>
+            </div>
+
+            <div aria-labelledby="boughtLots-tab" class="tab-pane fade" id="boughtLots" role="tabpanel">
+                <table class="table" th:if="${purchasedLots.size()>0}">
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col">№</th>
+                        <th scope="col">Название</th>
+                        <th scope="col">Описание</th>
+                        <th scope="col">Категория</th>
+                        <th scope="col">Состояние</th>
+                        <th scope="col">Город</th>
+                        <th scope="col">Цена</th>
+                        <th scope="col">Контанкты продавца</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="boughtLot, iter : ${purchasedLots}">
+                        <th scope="row" th:text="${iter.index + 1}">№</th>
+                        <td th:text="${boughtLot.getName()}">Название</td>
+                        <td th:text="${boughtLot.getDescription()}">Описание</td>
+                        <td th:text="${boughtLot.getCategory().getName()}">Категория</td>
+                        <td th:text="${boughtLot.getCondition().getName()}">Состояние</td>
+                        <td th:text="${boughtLot.getCity().getName()}">Город</td>
+                        <td th:text="${boughtLot.getCurrentPrice()}">Цена</td>
+                        <td>
+                            <p th:text="${boughtLot.userDto.getUsername()}"></p>
+                            <p th:text="${boughtLot.userDto.getFirstName() + ' ' + boughtLot.userDto.getLastName()}"></p>
+                            <p th:text="${boughtLot.userDto.getPhoneNumber()}"></p>
+                            <p th:text="${boughtLot.userDto.getEmail()}"></p>
+                            <p th:text="${boughtLot.userDto.getCity().getName()}"></p>
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="mx-4 my-3" th:unless="${purchasedLots.size()>0}">
+                    <h5 class="text-dark">Нет купленных товаров. <a th:href="@{/}">Желаете что-либо купить?</a></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col" id="userInfo">
+        <div class="container">
+            <div class="row mt-2">
+                <div class="col">
+                    <label class="ml-2 font-weight-bold" for="inputUsername">Пользователь</label>
+                    <input class="form-control" id="inputUsername" readonly th:value="${user.getUsername()}"
+                           type="text">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <label class="ml-2 font-weight-bold" for="firstName">Имя</label>
+                    <input class="form-control" id="firstName" readonly th:value="${user.getFirstName()}" type="text">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <label class="ml-2 font-weight-bold" for="lastName">Фамилия</label>
+                    <input class="form-control" id="lastName" readonly th:value="${user.getLastName()}" type="text">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <label class="ml-2 font-weight-bold" for="email">E-mail</label>
+                    <input class="form-control" id="email" readonly th:value="${user.getEmail()}" type="text">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <label class="ml-2 font-weight-bold" for="phone">Номер телефона</label>
+                    <input class="form-control" id="phone" readonly th:value="${user.getPhoneNumber()}" type="text">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <label class="ml-2 font-weight-bold" for="city">Город</label>
+                    <input class="form-control" id="city" readonly th:value="${user.getCity().getName()}" type="text">
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text font-weight-bold">Кошелек<i
+                                    class="fas fa-wallet pl-2 mt-1"></i></span>
+                        </div>
+                        <input class="form-control text-center" id="wallet" readonly th:value="${user.getWallet()}"
+                               type="number">
+                        <div class="input-group-append mr-3">
+                            <span class="input-group-text">&#x20bd</span>
+                        </div>
+                        <form method="POST" th:action="@{/account}">
+                            <input type="hidden" name="money" value="10000">
+                            <button class="btn btn-primary" type="submit"><i class="fas fa-plus-circle"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:insert="base::scripts"/>
+</body>
+</html>
