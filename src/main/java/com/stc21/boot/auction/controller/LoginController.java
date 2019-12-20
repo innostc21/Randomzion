@@ -25,8 +25,9 @@ public class LoginController {
     public String processLoginPage(
             @RequestParam(name = "success") Boolean success,
             Model model) {
-        if (success)
+        if (success) {
             return "redirect:/";
+        }
         return "redirect:/login";
     }
 }
